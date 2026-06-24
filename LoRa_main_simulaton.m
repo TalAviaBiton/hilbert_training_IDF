@@ -1,9 +1,10 @@
 %% define SF & BW and get a BET curve and a spectrogrm of the transmission as well as the range TOA and Rs 
 
-% close all; clear; clc;
+% close all;
+clear; clc;
 
 %% params definitions
-message = 'Hello LoRa';
+message = 'Hello LoRa whats up im just checking to see there are no errors here :)';
 EbNo_vec = -10:2:10; % dB
 SF = 11; 
 BW = 0.75 * 1e6; % Hz
