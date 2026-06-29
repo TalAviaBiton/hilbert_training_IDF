@@ -1,4 +1,4 @@
-function [signal_mod] = LoRa_Tx(message,Bandwidth,SF,Pt,Fs,df,varargin)
+function [ signal_mod] = LoRa_Tx(message,Bandwidth,SF,Pt,Fs,df,varargin)
 % LoRa_Tx emulates a Lora transmission
 %
 %   in:  message      payload message
@@ -36,7 +36,7 @@ elseif nargin == 9
     SyncKey = varargin{3} ;
 end
 
-packet = LoRa_Encode_Full(message,SF,CR) ; % encode message
+[packet] = LoRa_Encode_Full(message,SF,CR) ; % encode message
 signal = LoRa_Modulate_Full(packet,SF,Bandwidth,n_preamble,SyncKey,Fs) ; % LoRa modulate message
 signal_mod = 10.^(Pt./20).*signal.*exp(-j.*2.*pi.*df/Fs.*(0:length(signal)-1))' ; % frquency shift and convert to power
 end

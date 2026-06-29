@@ -3,10 +3,10 @@
 clear; clc;
 
 %% params definitions
-message = 'Hello LoRa whats up im just checking to see there are no errors here :)';
+message = 'LoRa whats up im just checking to see there are no errors here :) ';
 EbNo_vec = -10:2:10; % dB
-SF = 11; 
-BW = 0.75 * 1e6; % Hz
+SF =  8 ; 
+BW = 3 * 1e6; % Hz
 Pt = 1; % dBm 
 Fs = BW .* 2; % Hz
 C = 3 * 10 ^ 8; % m/s
@@ -29,14 +29,12 @@ figure('Name', 'Spectrogram of Received LoRa Signal');
 spectrogram(signal_mod, 256, 250, 256, Fs, 'yaxis');
 title('Spectrogram of Modulated Signal');
 
-%% Pre-calculating TX bits outside the loop to save time
+%% Pre-calculating to save time
 msg_tx_char = convertStringsToChars(message);
 msg_tx_bits = reshape(dec2bin(msg_tx_char, 8).', 1, []).'- '0';
 ber_results = zeros(size(EbNo_vec));
 
-% Pre-calculate SNR and Pr vectors for vectorized processing if supported by LoRa_Rx
 snr_db_vec = EbNo_vec + 10*log10(code_rate/4) + 10*log10(SF); 
-Pr_vec = N_noise + snr_db_vec; 
 
 %% displaying BER curve
 for k = 1:length(EbNo_vec)
@@ -63,8 +61,10 @@ title(['BER Performance - SF = ' num2str(SF) ', BW = ' num2str(BW/1e6) ' MHz']);
 
 %% calculate results
 M = 2 ^ SF;
-t_TOA = M / BW; % sec
-t_RS = BW / M;  % symbols per sec
-t_range = (10 .^ ((Pr_vec - Pt - Gr - Gt) / 20)) * 4 * pi / lambda; % meters
+Pr_vec = N_noise + snr_db_vec; 
+
+TOA = M / BW; % sec
+RS = BW / M;  % symbols per sec
+range = ((10 .^ ((Pr_vec - Pt - Gr - Gt) / 20)) * 4 * pi / lambda).'; % meters
 
 %bw=0.75 sf=11

@@ -3,9 +3,9 @@
 clear; clc;
 
 %% params definitions
-message = 'Hello LoRa whats up im just checking to see there are no errors here :)';
+message = 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhLoRa whats up im just checking to see there are no errors here :) ';
 EbNo_vec = -10:2:10; % dB
-SF = 10; 
+SF =  7 ; 
 BW = 0.5 * 1e6; % Hz
 Pt = 1; % dBm 
 Fs = BW .* 2; % Hz
@@ -66,5 +66,3 @@ Pr_vec = N_noise + snr_db_vec;
 TOA = M / BW; % sec
 RS = BW / M;  % symbols per sec
 range = ((10 .^ ((Pr_vec - Pt - Gr - Gt) / 20)) * 4 * pi / lambda).'; % meters
-
-%bw=0.75 sf=11
