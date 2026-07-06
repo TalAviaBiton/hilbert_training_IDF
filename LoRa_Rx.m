@@ -82,7 +82,7 @@ pream_signal    = signal(1:length(dChirpsDemod)).*dChirpsDemod ;
 symbols_pream   = FSKDetection(pream_signal,SF,Coherece) ;
 symbol_offset   = mode(symbols_pream) + 1 ;
 %% Demodulate Message
-MessageStartInd = (NPreamb + 4.25)*M ;
+MessageStartInd = floor((NPreamb + 4.25)*M);
 Nmessage        = floor(length(signal)/M - MessageStartInd/M) ;
 MessageEndInd   = Nmessage.*M + MessageStartInd ;
 
@@ -188,6 +188,7 @@ symbols_pld_shf = LoRa_decode_shuffle(symbols_pld_int,length(symbols_pld_int)) ;
 symbols_pld_hdr = [(SF>7).*symbols_hdr_shf(end - SF + 8:end) symbols_pld_shf] ;
 % White
 symbols_pld_wht = LoRa_decode_white(symbols_pld_hdr,rdd_pld,0) ;
+% symbols_pld_wht = symbols_pld_hdr ;
 % Hamming
 symbols_pld_fec = LoRa_decode_hamming(symbols_pld_wht,rdd_pld) ;
 % Swaping

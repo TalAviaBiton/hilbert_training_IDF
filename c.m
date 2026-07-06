@@ -1,13 +1,13 @@
-function [numofsyms] = c(msg)
+function [numofsyms] = c(msg, Fs)
 %% define SF & BW and get a BET curve and a spectrogram of the transmission as well as the range TOA and Rs 
 
 %% params definitions
 message = msg;
-EbNo_vec = -10:2:10; % dB
-SF =  11 ; 
-BW = 0.5 * 1e6; % Hz
+EbNo_vec = 20:2:40; % dB
+SF =  7 ; 
+BW = 1 * 1e6; % Hz
 Pt = 1; % dBm 
-Fs = BW .* 2; % Hz
+Fs = Fs * 1e6; % Hz
 C = 3 * 10 ^ 8; % m/s
 Gr = 0; % dBi
 Gt = 0; % dBi
@@ -33,7 +33,7 @@ msg_tx_char = convertStringsToChars(message);
 msg_tx_bits = reshape(dec2bin(msg_tx_char, 8).', 1, []).'- '0';
 ber_results = zeros(size(EbNo_vec));
 
-snr_db_vec = EbNo_vec + 10*log10(code_rate/4) + 10*log10(SF); 
+snr_db_vec = EbNo_vec + 10*log10(code_rate*SF/(2^SF)) ;
 
 %% displaying BER curve
 for k = 1:length(EbNo_vec)

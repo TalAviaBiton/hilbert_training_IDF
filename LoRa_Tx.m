@@ -38,7 +38,7 @@ end
 
 [packet] = LoRa_Encode_Full(message,SF,CR) ; % encode message
 signal = LoRa_Modulate_Full(packet,SF,Bandwidth,n_preamble,SyncKey,Fs) ; % LoRa modulate message
-signal_mod = 10.^(Pt./20).*signal.*exp(-j.*2.*pi.*df/Fs.*(0:length(signal)-1))' ; % frquency shift and convert to power
+signal_mod = 10.^(Pt./20).*signal.*exp(-1j.*2.*pi.*df/Fs.*(0:length(signal)-1))' ; % frquency shift and convert to power
 end
 function [packet] = LoRa_Encode_Full(message,SF,CR)
 % LoRa_Encode_Full emulates a Lora transmission
@@ -72,13 +72,15 @@ pld_enc = LoRa_encode_hamming(pld_swp,CR) ;
 pld_enc = pld_enc(1 : min(n_wht, length(pld_enc))) ;
 %% Payload Whiten
 pld_wht = LoRa_encode_white(pld_enc,CR,0) ;
+% pld_wht = pld_enc;
+
 %% Header Encoding
 packet_hdr = [(length(message_dbl)+5) CRC_pld*16+(CR==1)*32+(CR==2).*64+(CR==3).*96+(CR==4)*128 224] ;
 packet_hdr_enc_tmp = LoRa_encode_hamming(packet_hdr,4) ;
 if SF <= 6
-    packet_hdr_enc = packet_hdr_enc_tmp(1:5);
+    packet_hdr_enc = packet_hdr_enc_tmp(1:5); 
 else
-    packet_hdr_enc = [packet_hdr_enc_tmp(1:5) pld_wht(1:N_pld-1)] ;
+    packet_hdr_enc = [packet_hdr_enc_tmp(1:5) pld_wht(1:N_pld-1)];
 end
 %% Packet Creation
 packet_pld = pld_wht(max(N_pld,1) : end) ;
