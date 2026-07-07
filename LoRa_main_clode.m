@@ -17,7 +17,8 @@ chirpy = chirp(t,0,1,250);
 inst_freq = instfreq(chirpy, fs);
 mid_freq = (max(inst_freq) + min(inst_freq)) / 2;
 message = inst_freq > mid_freq; 
-
+pspectrum(chirpy,1e3,"spectrogram",TimeResolution=0.1, ...
+    OverlapPercent=99,Leakage=0.85)
 % message = randi([0,1], 1, 225);
 symbols = phy.encode(message);
 
