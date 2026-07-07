@@ -400,7 +400,7 @@ classdef LoRaPHY < handle & matlab.mixin.Copyable
 
             if self.crc
                 % data = uint8([payload self.calc_crc(payload).']);
-                data = uint8([payload.' ; self.calc_crc(payload)]);
+                data = uint8([payload ; self.calc_crc(payload)]);
             else
                 data = uint8(payload);
             end
@@ -705,7 +705,7 @@ classdef LoRaPHY < handle & matlab.mixin.Copyable
                 symbols_g = self.gray_coding(symbols_m(:, pkt_num));
 
                 % deinterleave
-                codewords = self.diag_deinterleave(symbols_g(1:8), self.sf-2);
+                codewords = self.diag_deinterleave(symbols_g(1:8), self.sf);
                 if ~self.has_header
                     nibbles = self.hamming_decode(codewords, 8);
                 else
@@ -1111,15 +1111,12 @@ classdef LoRaPHY < handle & matlab.mixin.Copyable
         end
 
         function spec(sig, fs, bw, sf)
-            % x = 0:1/sf:2^sf/bw;
-            % y = -bw/2:bw/2;
+            x = 0:1/sf:2^sf/bw;
+            y = -bw/2:bw/2;
             p = fs/bw;
-            win_length = 2^(sf-2);
+            win_length = min(length(sig),2^(sf));
             N = round(p*2^sf);
-            % figure('Name', 'Spectrogram of Received LoRa Signal');
-            % spectrogram(sig, win_length, round(win_length*0.8), N, 'yaxis');
-            % title('Spectrogram of Modulated Signal');
-            [s, x, y] = spectrogram(sig,win_length,round(win_length*0.8),N);
+            [s] = spectrogram(sig,win_length,round(win_length*0.8),N);
             valid_data_len = round(2^sf/2*1.5);
             b = abs(s(valid_data_len:-1:1,:));
             c = abs(s(end:-1:end-valid_data_len+1,:));

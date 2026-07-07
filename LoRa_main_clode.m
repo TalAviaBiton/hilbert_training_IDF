@@ -7,12 +7,18 @@ clear; clc;
 %%% Example %%%
 rf_freq = 470e6;
 sf = 7;
-bw = 1e6;
-fs = 2e6;
+bw = 2e6;
+fs = 4e6;
 phy = LoRaPHY(rf_freq, sf, bw, fs);
 phy.has_header = 1; % explicit header mode
 
-message = randi([0,1], 1, 225);
+t = 0:1/1e3:2;
+chirpy = chirp(t,0,1,250);
+inst_freq = instfreq(chirpy, fs);
+mid_freq = (max(inst_freq) + min(inst_freq)) / 2;
+message = inst_freq > mid_freq; 
+
+% message = randi([0,1], 1, 225);
 symbols = phy.encode(message);
 
 %% displaying in spectrogram
