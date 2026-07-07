@@ -1122,7 +1122,7 @@ classdef LoRaPHY < handle & matlab.mixin.Copyable
             c = abs(s(end:-1:end-valid_data_len+1,:));
             d = [b;c];
             figure;
-            imagesc(x,y,d);
+            imagesc(x,y,d);.
             colormap summer;
             title('Spectrogram');
             xlabel('Time');

@@ -1,7 +1,7 @@
 
 %%% Example %%%
 rf_freq = 470e6;
-sf = 12;
+sf = 11;
 bw = 1.25e6;
 fs = 1e6;
 phy = LoRaPHY(rf_freq, sf, bw, fs);

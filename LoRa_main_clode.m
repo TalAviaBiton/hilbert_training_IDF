@@ -6,13 +6,13 @@ clear; clc;
 %LORAPHY LoRa physical layer implementation
 %%% Example %%%
 rf_freq = 470e6;
-sf = 12;
-bw = 1.25e6;
+sf = 7;
+bw = 1e6;
 fs = 1e6;
 phy = LoRaPHY(rf_freq, sf, bw, fs);
 phy.has_header = 1; % explicit header mode
 
-message = [0 0 0 0 1 1 1 1 0 0 0 1 1 1 0 0 1 1 0 1];
+message = randi([0,1], 1, 225);
 symbols = phy.encode(message);
 
 %% displaying in spectrogram
@@ -27,8 +27,13 @@ snr_db_vec = EbNo_vec + 10*log10(sf/(2^sf));
 %% displaying BER curve
 for k = 1:length(EbNo_vec)
 
-    noise = randi(0:1, 1,length(data));
-    [data, ~] = phy.decode(symbols + noise);
+    % add noise
+    SNR_lin = 10^(snr_db_vec/10);
+    P_sig = mean(abs(symbols).^2);
+    P_noise = P_sig / SNR_lin;
+    noisy_symbols = symbols + sqrt(P_noise/2) * (randn(size(symbols)) + 1j*randn(size(symbols)));
+    
+    [data, ~] = phy.decode(noisy_symbols);
 
     % calculate BER
     if length(data) == length(message)
