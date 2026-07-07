@@ -1,5 +1,5 @@
 %% define SF & BW and get a BET curve and a spectrogram of the transmission as well as the range TOA and Rs 
-% close all;
+close all;
 clear; clc;
 
 %% params definitions
@@ -8,7 +8,7 @@ clear; clc;
 rf_freq = 470e6;
 sf = 7;
 bw = 1e6;
-fs = 1e6;
+fs = 2e6;
 phy = LoRaPHY(rf_freq, sf, bw, fs);
 phy.has_header = 1; % explicit header mode
 
@@ -28,10 +28,10 @@ snr_db_vec = EbNo_vec + 10*log10(sf/(2^sf));
 for k = 1:length(EbNo_vec)
 
     % add noise
-    SNR_lin = 10^(snr_db_vec/10);
+    SNR_lin = 10.^(snr_db_vec/10);
     P_sig = mean(abs(symbols).^2);
-    P_noise = P_sig / SNR_lin;
-    noisy_symbols = symbols + sqrt(P_noise/2) * (randn(size(symbols)) + 1j*randn(size(symbols)));
+    P_noise = P_sig ./ SNR_lin;
+    noisy_symbols = symbols + sqrt(P_noise/2) .* randn(size(symbols));
     
     [data, ~] = phy.decode(noisy_symbols);
 
