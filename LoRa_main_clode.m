@@ -7,20 +7,31 @@ clear; clc;
 %%% Example %%%
 rf_freq = 470e6;
 sf = 7;
-bw = 2e6;
-fs = 4e6;
+bw = 125e3;
+fs = 1e6;
 phy = LoRaPHY(rf_freq, sf, bw, fs);
 phy.has_header = 1; % explicit header mode
 
-t = 0:1/1e3:2;
-chirpy = chirp(t,0,1,250);
-inst_freq = instfreq(chirpy, fs);
-mid_freq = (max(inst_freq) + min(inst_freq)) / 2;
-message = inst_freq > mid_freq; 
-pspectrum(chirpy,1e3,"spectrogram",TimeResolution=0.1, ...
-    OverlapPercent=99,Leakage=0.85)
-% message = randi([0,1], 1, 225);
-symbols = phy.encode(message);
+fs = 10000;             % תדר דגימה (Hz)
+duration_ms = 50;       % משך האות במילי-שניות
+t = 0:1/fs:(duration_ms/1000 - 1/fs); 
+
+f0 = 100;               % תדר התחלתי
+f1 = 2000;              % תדר סופי
+
+y = chirp(t, f0, duration_ms/1000, f1, 'linear');
+
+bits = y > 0;
+
+% t = 0:1/20e3:2;
+% chirpy = chirp(t,20,100,250);
+% pspectrum(chirpy,1e3,"spectrogram",TimeResolution=0.1, ...
+%     OverlapPercent=99,Leakage=0.85)
+
+% inst_freq = instfreq(chirpy, fs);
+% mid_freq = (max(inst_freq) + min(inst_freq)) / 2;
+% message = inst_freq > mid_freq; 
+symbols = phy.encode(bits);
 
 %% displaying in spectrogram
     phy.spec(symbols, fs, bw, sf);

@@ -12,10 +12,14 @@ fs = 4e6;
 phy = LoRaPHY(rf_freq, sf, bw, fs);
 phy.has_header = 1; % explicit header mode
 
-
 t = 0:1/1e3:2;
-message = de2bi(chirp(t,0,1,250));
+chirpy = chirp(t,0,100,250);
+pspectrum(chirpy,1e3,"spectrogram",TimeResolution=0.1, ...
+    OverlapPercent=99,Leakage=0.85)
 
+inst_freq = instfreq(chirpy, fs);
+mid_freq = (max(inst_freq) + min(inst_freq)) / 2;
+message = inst_freq > mid_freq; 
 % message = randi([0,1], 1, 225);
 symbols = phy.encode(message);
 
