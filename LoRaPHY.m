@@ -457,7 +457,8 @@ classdef LoRaPHY < handle & matlab.mixin.Copyable
                 header_nibbles(3) = bitor(2*self.cr, self.crc);
             end
             % [SF5/6 PATCH] GF(2) arithmetic without toolbox
-            x = mod(self.header_checksum_matrix * reshape(de2bi(header_nibbles(1:3), 4, 'left-msb')', [], 1), 2);
+            %x = mod(self.header_checksum_matrix .* reshape(de2bi(header_nibbles(1:3), 4, 'left-msb')', [], 1), 2);
+            x = mod(self.header_checksum_matrix .* reshape(de2bi(header_nibbles(1:3), 5, 'left-msb')', [], 1), 2);
             header_nibbles(4) = x(1);
             for i = 1:4
                 header_nibbles(5) = bitor(header_nibbles(5), x(i+1)*2^(4-i));
