@@ -451,14 +451,14 @@ classdef LoRaPHY < handle & matlab.mixin.Copyable
             header_nibbles = zeros(5, 1);
             header_nibbles(1) = bitshift(plen, -4);
             header_nibbles(2) = bitand(plen, 15);
-            if isequal (self.cr, [])
+            if isequal (self.cr, [])q 
                 header_nibbles(3) = bitor(2*1, self.crc);
             else
                 header_nibbles(3) = bitor(2*self.cr, self.crc);
             end
             % [SF5/6 PATCH] GF(2) arithmetic without toolbox
-            %x = mod(self.header_checksum_matrix .* reshape(de2bi(header_nibbles(1:3), 4, 'left-msb')', [], 1), 2);
-            x = mod(self.header_checksum_matrix .* reshape(de2bi(header_nibbles(1:3), 5, 'left-msb')', [], 1), 2);
+            %x = mod(self.header_checksum_matrix * reshape(de2bi(header_nibbles(1:3), 4, 'left-msb')', [], 1), 2);
+            x = mod(self.header_checksum_matrix(:).' .* reshape(de2bi(header_nibbles(1:3).', 5, 'left-msb')', [], 1), 2);
             header_nibbles(4) = x(1);
             for i = 1:4
                 header_nibbles(5) = bitor(header_nibbles(5), x(i+1)*2^(4-i));
@@ -718,9 +718,10 @@ classdef LoRaPHY < handle & matlab.mixin.Copyable
                     % we only calculate header checksum on the first three nibbles
                     % the valid header checksum is considered to be 5 bits
                     % other 3 bits require further reverse engineering
-                    header_checksum = [bitand(nibbles(4), 1); de2bi(nibbles(5), 4, 'left-msb')'];
+                    header_checksum = [bitand(nibbles(4), 1); de2bi(nibbles(5), 5, 'left-msb')'];
                     % [SF5/6 PATCH] GF(2) arithmetic without toolbox
-                    header_checksum_calc = mod(self.header_checksum_matrix * reshape(de2bi(double(nibbles(1:3)), 4, 'left-msb')', [], 1), 2);
+                    header_checksum_calc = mod(self.header_checksum_matrix(:).' .* reshape(de2bi(nibbles(1:3).', 5, 'left-msb')', [], 1), 2);
+                    % header_checksum_calc = mod(self.header_checksum_matrix(:).' * reshape(de2bi(double(nibbles(1:3)), 5, 'left-msb')', [], 1), 2);
                     if any(double(header_checksum) ~= header_checksum_calc)
                         error('Invalid header checksum!');
                     end

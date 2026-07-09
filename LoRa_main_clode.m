@@ -34,7 +34,7 @@ bits = y > 0;
 symbols = phy.encode(bits);
 
 %% displaying in spectrogram
-    phy.spec(symbols, fs, bw, sf);
+    % phy.spec(symbols, fs, bw, sf);
 
 %% Pre-calculating to save time
 EbNo_vec = -10:2:10; % dB
