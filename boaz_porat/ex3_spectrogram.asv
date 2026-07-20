@@ -1,0 +1,17 @@
+function create_spectrogram(signal, Fs, dt, RBW, overlap, window)
+% dt is requierd time resolution
+% RBW is requierd frequncy 
+f_start = ;
+f_stop = ;
+t_start = ;
+t_stop = ;
+Fc = ;
+plt_config = [f_start, f_stop, t_start, t_stop, Fc];
+
+%check rbw and dt corespond to eachother
+
+%buffer
+%imagesc
+%set(gca, 'ydir', 'normal')
+
+end
