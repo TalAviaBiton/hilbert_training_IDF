@@ -21,7 +21,7 @@ function spec(signal, Fs, dt, RBW, overlap, window)
 N = Fs / RBW;
 
 if N ~= 1 / dt
-    error("RBW and dt must correspond")
+    error("RBW and dt must correspond");
 end
 
 Ts = 1 / Fs;
@@ -31,17 +31,17 @@ f = -Fs/2:Fs/N:Fs/2 - Fs/N;
 buf_sig = buffer(signal, RBW, overlap);
 win_sig =  buf_sig .*  window;
 
-fft_sig = fftshift(abs(fft(win_sig, RBW)));
+fft_sig = fftshift(abs(fft(win_sig)));
 
-figure
-plot(t,(signal));
-figure
+% figure;
+% plot(t,(signal));
+figure;
 plot(f, fft_sig);
 
-figure
+figure;
 imagesc(t, f, fft_sig);
-figure
-spectrogram(signal);
+% figure;
+% spectrogram(signal);
 
 end
 
