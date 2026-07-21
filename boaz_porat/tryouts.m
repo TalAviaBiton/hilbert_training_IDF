@@ -13,3 +13,20 @@ xlabel('זמן (שניות)');
 ylabel('משרעת');
 title('אות סינוס');
 grid on;
+
+function spec_try(signal, Fs, N)
+Ts = 1 / Fs;
+t = 0:Ts:Ts*(N-1) ;
+f = -Fs/2:Fs/N:Fs/2 - Fs/N;
+
+fft_sig = fftshift(abs(fft(signal)));
+
+% figure
+% plot(f, fft_sig);
+% figure
+% plot(t,(sig));
+figure
+imagesc(t, f, fft_sig);
+figure
+spectrogram(signal);
+end
