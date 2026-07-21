@@ -1,38 +1,63 @@
-spec = create_spectrogram(signal, Fs, dt, RBW, overlap, symetryc_rect);
+close all;
 
-function spec = create_spectrogram(signal, Fs, dt, RBW, overlap, window)
-% dt - required time resolution
-% RBW - required frequency resolution
-% overlap - percentage of overlap between two windows
-% window - anonymous function that returns the window
-
-f_start = 1e6;
-f_stop = 2e6;
-t_start = 0;
-t_stop = 1e3;
-Fc = 1.5e6;
-
-%check RBW and dt correspond to each other
-
-
-buf_sig= buffer(signal, RBW, overlap);
-
-delta_f = Fs/RBW;
-k = ceil(log2(delta_f));
-N = 2 ^ k;
-win = window(length(signal), N);
+Fs = 1e3;
+Fc = 50;
+N = 1000;
+overlap = 0;
 
 Ts = 1 / Fs;
-t = t_start:1 / dt:t_stop - 1 / dt;
-f = f_start:1 / RBW:f_stop - 1 / RBW;
-imagesc(t, f, buf_sig);
-set(buf_sig, 'ydir', 'normal')
+dt = 1 / N;
+RBW = Fs / N;
+
+t = 0:Ts:Ts*(N-1);
+
+signal = sin(2 * pi * Fc * t);
+
+spec(signal, Fs, dt, RBW, overlap, rectwin(RBW));
+
+
+function spec(signal, Fs, dt, RBW, overlap, window)
+
+N = Fs / RBW;
+
+if N ~= 1 / dt
+    error("RBW and dt must correspond")
+end
+
+Ts = 1 / Fs;
+t = 0:Ts:Ts*(N-1) ;
+f = -Fs/2:Fs/N:Fs/2 - Fs/N;
+
+buf_sig = buffer(signal, RBW, overlap);
+win_sig =  buf_sig .*  window;
+
+fft_sig = fftshift(abs(fft(win_sig, RBW)));
+
+figure
+plot(t,(signal));
+figure
+plot(f, fft_sig);
+
+figure
+imagesc(t, f, fft_sig);
+figure
+spectrogram(signal);
 
 end
 
-function rect = symetryc_rect(len, num_of_samples)
+function spec_try(signal, Fs, N)
+Ts = 1 / Fs;
+t = 0:Ts:Ts*(N-1) ;
+f = -Fs/2:Fs/N:Fs/2 - Fs/N;
 
-pad = zeros(1,(len-num_of_samples)/2);
-rect = [pad ones(1, num_of_samples) pad];
+fft_sig = fftshift(abs(fft(signal)));
 
+% figure
+% plot(f, fft_sig);
+% figure
+% plot(t,(sig));
+figure
+imagesc(t, f, fft_sig);
+figure
+spectrogram(signal);
 end
