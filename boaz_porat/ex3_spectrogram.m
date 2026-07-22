@@ -1,13 +1,12 @@
-%try to reduce interpulations: tradeoffs 
 clc; clear; close all;
 
-Fs = 2e3;
+Fs = 2e6;
 Fc = 50;
 N = 1000;  
 overlap = 0.25;
 
 Ts = 1 / Fs;
-dt = 1 / N;
+dt = 1 / N ;
 RBW = Fs / N;
 
 t = 0:Ts:Ts*(N-1);
@@ -17,9 +16,9 @@ signal = sin(2 * pi * Fc * t);
 t_start = 1; 
 t_stop = N ; 
 f_start = 1; 
-f_stop = Fs / 2; 
+f_stop = N ; 
 
-spec(signal, Fs, dt, RBW, overlap, hamming(RBW), t_start, t_stop, f_start, f_stop);
+spec(signal, Fs, dt, RBW, overlap, rectwin(RBW), t_start, t_stop, f_start, f_stop);
 
 
 function spec(signal, Fs, dt, RBW, overlap, window, t_start, t_stop, f_start, f_stop)
@@ -69,4 +68,9 @@ spectrogram(stp);
 
 end
 
+function rect = symetryc_rect(len, num_of_samples)
 
+pad = zeros(1,(len-num_of_samples)/2);
+rect = [pad ones(1, num_of_samples) pad];
+
+end

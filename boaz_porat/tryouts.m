@@ -14,6 +14,14 @@ ylabel('משרעת');
 title('אות סינוס');
 grid on;
 
+N = length(y);
+f = -fs/2:fs/N:fs/2 - fs/N;
+
+fft_sig = fftshift(abs(fft(y)));
+
+figure
+plot(f, fft_sig);
+
 function spec_try(signal, Fs, N)
 Ts = 1 / Fs;
 t = 0:Ts:Ts*(N-1) ;
