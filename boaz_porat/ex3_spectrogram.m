@@ -1,8 +1,8 @@
 clc; clear; close all;
 
-Fs = 2e6;
+Fs = 2e3;
 Fc = 50;
-N = 1e6;  
+N = 1e3;  
 overlap = 0.25;
 
 Ts = 1 / Fs;
@@ -20,7 +20,7 @@ f_stop = Fs / 2 ;
 
 spec(signal, Fs, dt, RBW, overlap, hamming(RBW), t_start, t_stop, f_start, f_stop);
 
-
+% הנחתי שרוצים את האות כמו שהוא ולא בbb
 function spec(signal, Fs, dt, RBW, overlap, window, t_start, t_stop, f_start, f_stop)
 
 N = length(signal);
@@ -68,20 +68,3 @@ spectrogram(stp);
 
 end
 
-function pulsed_signal=pulse_signal(window, signal)
-
-sig_len=length(signal);
-win_len=length(window);
-reps=ceil(sig_len/win_len);
-rep_win=repmat(window,1,reps);
-pulse=rep_win(1:sig_len);
-pulsed_signal=pulse.*signal;
-
-end
-
-function rect = symetryc_rect(len, num_of_samples)
-
-pad = zeros(1,(len-num_of_samples)/2);
-rect = [pad ones(1, num_of_samples) pad];
-
-end
