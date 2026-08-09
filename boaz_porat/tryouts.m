@@ -38,3 +38,18 @@ imagesc(t, f, fft_sig);
 figure
 spectrogram(signal);
 end
+
+%% 4
+
+m = mindivisor(6, 3);
+
+function m = mindivisor(N, a)
+    divs = N ./ (1:N);
+    for i = 1:N
+        if mod(divs(i), 1) ~= 0
+            divs(i) = inf(1,1);
+        end
+    end
+    [~, idx] = min(abs(divs - a));
+    m= divs(idx);
+end
