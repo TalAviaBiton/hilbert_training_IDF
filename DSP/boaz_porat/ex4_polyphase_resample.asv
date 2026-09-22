@@ -1,0 +1,136 @@
+close all; clc; clear;
+x = (1:100);
+N = 2.5;
+fs = 1;
+polyphased_changed_fs_x = Polyphase_filter(x, N, fs);
+stem(polyphased_changed_fs_x);
+
+function polyphased_changed_fs_x = Polyphase_filter(x, N, fs)
+
+if mod(N, 1) == 0
+    x_phases_changed = change_fs(x, N, fs);
+
+else
+    l = length(x);
+    phases = mindivisor(l, 1 / N);
+    
+    x_phases = reshape(x, [], phases);
+    
+    % new_fs = fs * N;
+    % x_filterd = anti_aliasing_filter(x_phases, new_fs);
+    
+    x_phases_changed = zeros(ceil(l * N /phases), phases);
+    for i = 1:phases
+        tmp = change_fs(x_phases(:, i), N, fs).';
+        x_phases_changed(:, i) = [tmp ; zeros(length(x_phases_changed(:, i)) - length(tmp))];
+    end
+end
+polyphased_changed_fs_x = x_phases_changed(:).';
+
+end
+
+function x_change_fs = change_fs (x, N, fs)
+
+M = mod(N, 1);
+L = floor(N / 1);
+
+interpulated_x = InterpulatePP (x, L, fs);
+x_change_fs = DecimatePP (interpulated_x, M, fs);
+
+end
+
+function decimaed_x = DecimatePP (x, M, fs)
+
+l = length(x);
+
+if M == 1
+    decimaed_x = x;
+    return;
+end
+if M == 0
+    decimaed_x = x;
+    return;
+end
+
+new_fs = fs / M;
+Wn = M ;
+Ast = 10;
+delta_w = new_fs;
+n = max(1, ceil((Ast - 8) / (2.285 * delta_w)));
+filter = fir1(n, Wn, 'low');
+
+m1 = 1;
+m2 = length(x);
+Len = length(filter) - m2;
+extended_x = Extend (x, Len, m1, m2);
+
+v = conv(extended_x, filter);
+
+y = dis_Extend (v, m1, m2);
+
+decimaed_x = y(1:M:end);
+
+decimaed_x = decimaed_x(1: floor(l *M));
+
+end
+
+function interpulated_x = InterpulatePP (x, L, fs)
+
+if L < 1
+    interpulated_x = x;
+    return;
+end
+
+up_sampled_x = upsample(x, L);
+
+new_fs = fs * L;
+Wn = 1 / L;
+% Ast = 20;
+% delta_w = new_fs;
+% n = max(1, ceil((Ast - 8e6) / (2.285 * delta_w)));
+delta_f = new_fs;
+n = 40; %max(1, ceil(8 / delta_f));
+filter = L * fir1(n, Wn);
+% filter = [1 1 1];
+m1 = 1;
+m2 = length(up_sampled_x);
+Len = length(filter) - m2;
+extended_x = Extend (up_sampled_x, Len, m1, m2);
+
+v = conv(extended_x, filter);
+
+interpulated_x = dis_Extend (v, m1, m2);
+
+end
+
+function extended_x = Extend (x, L, m1, m2)
+
+if m2 >= L / 2
+
+    left_extantion = x(m2 - L / 2:end);
+    right_extantion = x(m1:L / 2);
+    extended_x = [left_extantion x right_extantion];
+
+else
+
+    extended_x = Extend ([x(m2 / 2:end) x x(1:m2 / 2)], L, m1, m2 * 2);
+
+end
+end
+
+function x = dis_Extend (extended_x, m1, m2)
+
+x = extended_x(m1:m2);
+
+end
+
+function m = mindivisor(N, a)
+divs = N ./ (1:N);
+for i = 1:N
+    if mod(divs(i), 1) ~= 0
+        divs(i) = inf(1,1);
+    end
+end
+[~, idx] = min(abs(divs - a));
+m= divs(idx);
+end
