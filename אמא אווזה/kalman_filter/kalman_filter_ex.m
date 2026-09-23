@@ -1,9 +1,10 @@
-close all; clc; clear;
+ clc; clear;
+%close all
 
 %% data
-delta_t = 0.1; % sec
+delta_t = 1; % sec
 sigma = 5; % meter per axis
-sigma_a = 0.7; % meters / s ^ 2
+sigma_a = 7; % meters / s ^ 2
 
 %% section a: matrices
 zeros4 = zeros(1, 4);
@@ -37,7 +38,7 @@ for step = 2:num_of_steps
 
     % % section g: loosing every 3rd sample
     % if mod(step, 3) == 0
-    %     observation(step, :) = [0 0 0 0];
+    %     observation(step, :) = observation(step - 1, :);
     % end
 
 end
