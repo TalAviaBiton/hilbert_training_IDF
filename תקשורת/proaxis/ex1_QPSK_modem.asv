@@ -1,0 +1,48 @@
+function modulated_data = mod(data_bits, M, pulse_name, p1, p2, p3, fc, t)
+pulse = get_pulse(pulse_name, p1, p2, p3);
+BB_data_bits = conv(data_bits, pulse, 'same');
+PB_data_bits = BB2BP(BB_data_bits, fc, t);
+data_symbols = bi2de(reshape(PB_data_bits, [], log2(M)).', 'left-msb');
+constellations = get_constellations(M);
+modulated_data = constellations(data_symbols - 1);
+end
+
+function constellations = get_constellations(M)
+
+if mod(1, log2(M))
+    error("M must be a power of 2");
+end
+shift = 2 * pi / M;
+constellations = zeros(M, 1);
+if M == 4
+    constellations = constellations + pi / 2;
+end
+for i = 2:M
+    constellations(i, 1) = constellations(i - 1) + shift;
+end
+
+end
+
+function pulse = get_pulse(pulse_name, p1, p2, p3)
+
+if strcmp(pulse_name, 'rc')
+    pulse = rcosdesign(p1, p2, p3); % beta,span,sps
+elseif strcmp(pulse_name, 'rrc')
+    pulse = fft(sqrt(ifft(rcosdesign(p1, p2, p3)))); % beta,span,sps
+elseif strcmp(pulse_name, 'gaussian')
+    pulse = gauspuls(p1, p2, p3); % t,fc,bw
+elseif strcmp(pulse_name, 'rect')
+    pulse = rectpuls(p1, p2); % t,w
+else
+    error("pulse name must be rc/rrc/rect/gaussian");
+end
+
+end
+
+function BP_signal = BB2BP(BB_signal, fc, t)
+    BP_signal = BB_signal * exp(2 * 1j * pi * fc * t);
+end
+
+
+
+

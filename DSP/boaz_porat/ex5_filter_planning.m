@@ -33,5 +33,16 @@ N = n;
 MPS = (N + 1) / 60;
 
 %% part c - change Ap As and fs - fp (transition band width) and diagnose the affects on N, which has the largest impact?
+% העלאת גקליות בתחום המעבר מעלה את אונות הצד, הנמכה עושה הפוך.
+% העלאת ניחות בתחום המעבר מקטינה את אונות הצד והעלאה להפ *לא העבר החסימה.
+% הקטנה של fs - fp מקטינה את האונות
+% הגדלת גליות בתחום המעבר מקטינה את N פי 2 בערך, 
+% הגדלת ניחות בתחום החסימה מגדילה בערך פי 1.5 את N
+% הגדלת fs - fp מקטינה מצעט את N
 
-%% part d - divide the system to two step decimation: 20 then 5. (same As & Ap). find the filters order with firpmord. how many multiplication operations are needed per second?
+% %% part d - divide the system to two step decimation: 20 then 5. (same As & Ap). find the filters order with firpmord. how many multiplication operations are needed per second?
+
+M1 = 20;
+M2 = 5;
+
+%אותה כמות מכפלות
